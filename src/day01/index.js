@@ -23,8 +23,12 @@ const part1 = (rawInput) => {
 const part2 = (rawInput) => {
   const lists = parseInput(rawInput);
 
+  const seen = new Map();
+  lists[1].forEach((num) => {
+    seen.set(num, (seen.get(num) || 0) + 1)
+  })
   const similarities = lists[0].map((num, i) => {
-    return num * lists[1].filter(n => num === n).length
+    return num * (seen.get(num) || 0)
   });
 
   return similarities.reduce(sum, 0);
