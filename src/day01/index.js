@@ -1,5 +1,7 @@
 import run from "aocrunner";
 
+const sum = (val, cur) => val + cur
+
 const parseInput = (rawInput) => {
     const rows = rawInput.split("\n");
     let lists = [[],[]];
@@ -21,7 +23,11 @@ const part1 = (rawInput) => {
 const part2 = (rawInput) => {
   const lists = parseInput(rawInput);
 
-  return;
+  const similarities = lists[0].map((num, i) => {
+    return num * lists[1].filter(n => num === n).length
+  });
+
+  return similarities.reduce(sum, 0);
 };
 
 run({
