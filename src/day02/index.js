@@ -16,7 +16,6 @@ const parseInput = (rawInput) => {
 function reportIsValid(report) {
     let isIncreasing = true;
     let isDecreasing = true;
-    let safeDifference = true;
 
     for (let i = 1; i < report.length; i++) {
         let current = report[i];
@@ -29,13 +28,15 @@ function reportIsValid(report) {
             isDecreasing = false;
         }
 
+        if (!isIncreasing && !isDecreasing) return false;
+
         const diff = Math.abs(current - last);
         if (diff > 3 || diff < 1) {
-            safeDifference = false;
+            return false;
         }
     }
 
-    return safeDifference && ((isIncreasing || isDecreasing) && (!(isIncreasing && isDecreasing)))
+    return ((isIncreasing || isDecreasing) && (!(isIncreasing && isDecreasing)))
 }
 
 const part1 = (rawInput) => {
