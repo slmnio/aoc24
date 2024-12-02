@@ -9,44 +9,62 @@ const parseInput = (rawInput) => {
     return rawInput.split("\n").map(line => line.split(" ").map(x => parseInt(x)))
 };
 
+/**
+ * @param {number[]} report
+ * @returns {boolean}
+ */
+function reportIsValid(report) {
+    let isIncreasing = true;
+    let isDecreasing = true;
+    let safeDifference = true;
+
+    for (let i = 1; i < report.length; i++) {
+        let current = report[i];
+        let last = report[i - 1];
+
+        if (!(current > last)) {
+            isIncreasing = false;
+        }
+        if (!(current < last)) {
+            isDecreasing = false;
+        }
+
+        const diff = Math.abs(current - last);
+        if (diff > 3 || diff < 1) {
+            safeDifference = false;
+        }
+    }
+
+    return safeDifference && ((isIncreasing || isDecreasing) && (!(isIncreasing && isDecreasing)))
+}
+
 const part1 = (rawInput) => {
     const reports = parseInput(rawInput);
 
+    const safeReports = reports.filter(report => reportIsValid(report));
+    return safeReports.length;
+};
+
+const part2 = (rawInput) => {
+    const reports = parseInput(rawInput);
+
     const safeReports = reports.filter(report => {
+        const isSafe = reportIsValid(report);
+        if (isSafe) return true;
 
-        let isIncreasing = true;
-        let isDecreasing = true;
-        let safeDifference = true;
+        // check all other permutations where removing an option works
 
-        for (let i = 1; i < report.length; i++) {
-            let current = report[i];
-            let last = report[i - 1];
-
-            if (!(current > last)) {
-                isIncreasing = false;
-            }
-            if (!(current < last)) {
-                isDecreasing = false;
-            }
-
-            const diff = Math.abs(current - last);
-            if (diff > 3 || diff < 1) {
-                safeDifference = false;
-            }
-
+        for (let i = 0; i < report.length; i++) {
+            let newLevels = [...report].filter((num, i2) => i2 !== i);
+            if (reportIsValid(newLevels)) return true;
         }
 
-        return safeDifference && ((isIncreasing || isDecreasing) && (!(isIncreasing && isDecreasing)))
+        return false;
     });
 
     return safeReports.length;
 };
 
-const part2 = (rawInput) => {
-    const input = parseInput(rawInput);
-
-    return;
-};
 
 run({
     part1: {
