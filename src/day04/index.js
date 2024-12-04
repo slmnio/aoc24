@@ -25,22 +25,31 @@ const part1 = (rawInput) => {
 
     let correct = 0;
 
+    const solution = "XMAS";
+
+    /* technically this is y,x but the difference between columns & rows is not important in this puzzle */
     for (let x = 0; x < cells.length; x++) {
         for (let y = 0; y < cells[x].length; y++) {
             const coords = [x, y];
             const cell = cells[x][y];
 
-            if (cell === "X") {
-                // an XMAS must have X in it
+            if (cell === solution[0]) {
+                // an XMAS must have X in it (and we can start looking from X since it only occurs once per XMAS)
                 // look around for a M
-                let nearbyMs = getNearLocations(cells, coords, "M");
+                let nearbyMs = getNearLocations(cells, coords, solution[1]);
                 if (!nearbyMs.length) continue;
 
                 for (const [mXOffset, mYOffset] of nearbyMs) {
-                    if (cells?.[x + (mXOffset * 2)]?.[y + (mYOffset * 2)] !== "A") continue;
-                    if (cells?.[x + (mXOffset * 3)]?.[y + (mYOffset * 3)] !== "S") continue;
-
-                    correct++;
+                    let correctNums = 2;
+                    for (let i = 2; i < solution.length; i++) {
+                        const letter = solution[i];
+                        if (cells[x + (mXOffset * i)]?.[y + (mYOffset * i)] === letter) {
+                            correctNums++;
+                        }
+                    }
+                    if (correctNums === solution.length) {
+                        correct++;
+                    }
                 }
             }
         }
@@ -55,12 +64,9 @@ const part2 = (rawInput) => {
 
     for (let x = 0; x < cells.length; x++) {
         for (let y = 0; y < cells[x].length; y++) {
-            const coords = [x, y];
             const cell = cells[x][y];
 
             if (cell === "A") {
-
-                // X-MAS
                 /*
 
                 M.S
@@ -72,19 +78,15 @@ const part2 = (rawInput) => {
                 // an X-MAS must have A in it
                 // look around for Ms and Ss
 
-
                 const xCells = [
                     cells[x-1]?.[y-1], /* irrelevant */ cells[x+1]?.[y-1],
                     /* irrelevant */   /*     A      */  /* irrelevant */
                     cells[x-1]?.[y+1], /* irrelevant */ cells[x+1]?.[y+1],
                 ].filter(Boolean);
 
+                // must be 2 Ms and 2 As, and they must share a side
+
                 if (xCells.length !== 4) continue;
-
-                // must be 2 Ms and 2 As
-                // and they must share a side
-
-                if (!xCells.some(cell => cell !== "S" || cell !== "M")) continue;
                 if (!(xCells.filter(cell => cell === "M").length === 2 && xCells.filter(cell => cell === "S").length === 2)) continue;
 
                 if (xCells[0] ===  xCells[3]) continue;
