@@ -42,10 +42,6 @@ const part1 = (rawInput) => {
 
                     correct++;
                 }
-                // let Aneighbours = getNear(cells, coords, "A");
-                // if (!Aneighbours.length) continue;
-                // let Sneighbours = getNear(cells, coords, "S");
-                // if (!Sneighbours.length) continue;
             }
         }
     }
@@ -54,9 +50,52 @@ const part1 = (rawInput) => {
 };
 
 const part2 = (rawInput) => {
-    const input = parseInput(rawInput);
+    const cells = parseInput(rawInput);
+    let correct = 0;
 
-    return;
+    for (let x = 0; x < cells.length; x++) {
+        for (let y = 0; y < cells[x].length; y++) {
+            const coords = [x, y];
+            const cell = cells[x][y];
+
+            if (cell === "A") {
+
+                // X-MAS
+                /*
+
+                M.S
+                .A.
+                M.S
+
+                 */
+
+                // an X-MAS must have A in it
+                // look around for Ms and Ss
+
+
+                const xCells = [
+                    cells[x-1]?.[y-1], /* irrelevant */ cells[x+1]?.[y-1],
+                    /* irrelevant */   /*     A      */  /* irrelevant */
+                    cells[x-1]?.[y+1], /* irrelevant */ cells[x+1]?.[y+1],
+                ].filter(Boolean);
+
+                if (xCells.length !== 4) continue;
+
+                // must be 2 Ms and 2 As
+                // and they must share a side
+
+                if (!xCells.some(cell => cell !== "S" || cell !== "M")) continue;
+                if (!(xCells.filter(cell => cell === "M").length === 2 && xCells.filter(cell => cell === "S").length === 2)) continue;
+
+                if (xCells[0] ===  xCells[3]) continue;
+                if (xCells[1] ===  xCells[2]) continue;
+
+                correct++;
+            }
+        }
+    }
+
+    return correct;
 };
 
 run({
@@ -75,10 +114,19 @@ XMAS.S
     },
     part2: {
         tests: [
-            // {
-            //   input: ``,
-            //   expected: "",
-            // },
+            {
+              input: `.M.S......
+..A..MSMS.
+.M.S.MAA..
+..A.ASMSM.
+.M.S.M....
+..........
+S.S.S.S.S.
+.A.A.A.A..
+M.M.M.M.M.
+..........`,
+              expected: 9,
+            },
         ],
         solution: part2,
     },
